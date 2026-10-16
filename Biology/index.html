@@ -86,8 +86,8 @@ button{border:1px solid var(--line);background:var(--card);color:var(--text);bor
 <div id="editModal" class="modal hidden"><div class="box"></div></div>
 <div id="pickModal" class="modal hidden" style="z-index:80"><div class="box"></div></div>
 <div id="themeModal" class="modal hidden" style="z-index:70"><div class="box"></div></div>
-<div id="ioModal" class="modal hidden"><div class="box"><h2>تصدير / استيراد</h2><small>انسخي الكود للاحتفاظ بنسخة، أو الصقي كود خريطة جاهزة ثم اضغطي استيراد (يستبدل الخريطة الحالية).</small>
-  <textarea id="ioT"></textarea><div class="row"><button id="ioCopy">نسخ</button><button id="ioIn" class="pri">استيراد</button><button id="ioX">إغلاق</button></div></div></div>
+<div id="ioModal" class="modal hidden"><div class="box"><h2>تصدير / استيراد</h2><small>اختاري ملف خريطة (JSON) أو الصقي كوده، ثم «إضافة للخريطة» (يضيف ويحدّث البطاقات بنفس المعرّف) أو «استبدال الكل».</small>
+  <input type="file" id="ioF" accept=".json,application/json"><textarea id="ioT"></textarea><div class="row"><button id="ioCopy">نسخ</button><button id="ioAdd" class="pri">إضافة للخريطة</button><button id="ioIn">استبدال الكل</button><button id="ioX">إغلاق</button></div></div></div>
 <div id="dlg" class="modal hidden" style="z-index:95"><div class="box"><h3 id="dMsg"></h3><input id="dIn" class="hidden">
   <div class="row"><button id="dOk" class="pri"></button><button id="dNo"></button></div></div></div>
 <div id="lightbox" class="modal hidden"><img alt=""></div>
@@ -252,6 +252,8 @@ $('#bTitle').onclick=async()=>{const t=await ask('عنوان الموقع',{inpu
 $('#bIO').onclick=()=>{$('#ioT').value=JSON.stringify(S);show('#ioModal')};$('#ioX').onclick=()=>show('#ioModal',false);
 $('#ioCopy').onclick=()=>{$('#ioT').select();navigator.clipboard&&navigator.clipboard.writeText($('#ioT').value);toast('تم النسخ')};
 $('#ioIn').onclick=async()=>{try{const d=JSON.parse($('#ioT').value);if(!Array.isArray(d.nodes))throw 0;if(await ask('سيتم استبدال الخريطة الحالية. متأكدة؟',{ok:'استيراد'})){S={...S,...d};show('#ioModal',false);render();fit();queueSave()}}catch(e){toast('الكود غير صالح')}};
+$('#ioF').onchange=async e=>{const f=e.target.files[0];if(f){$('#ioT').value=await f.text();toast('تم تحميل الملف. اختاري إضافة أو استبدال')}};
+$('#ioAdd').onclick=()=>{try{const d=JSON.parse($('#ioT').value);if(!Array.isArray(d.nodes))throw 0;d.nodes.forEach(n=>{const i=S.nodes.findIndex(x=>x.id===n.id);if(i>=0)S.nodes[i]={...S.nodes[i],...n};else S.nodes.push(n)});show('#ioModal',false);render();fit();queueSave();toast('تمت الإضافة')}catch(e){toast('الكود غير صالح')}};
 $('#bOut').onclick=()=>{admin=false;pin='';show('#bar',false);render()};
 /* ===== الدخول السري ===== */
 let tp=[],gl=0,glT;const logo=$('#logo');
