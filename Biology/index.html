@@ -7,7 +7,7 @@
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--font:'Tajawal',sans-serif;--bg:#faf5ec;--bg2:#efe3cc;--card:#fffdf8;--text:#3a2c18;--muted:#8c7a5b;--accent:#c2791d;--line:#e3d3b8;--glow:rgba(194,121,29,.28)}
+:root{--font:'Tajawal',sans-serif;--bg:#07110f;--bg2:#0d2420;--card:#0f1f1c;--text:#e8fff6;--muted:#8fb5a8;--accent:#34d399;--line:#1e3a33;--glow:rgba(52,211,153,.28)}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;overflow:hidden;font-family:var(--font);color:var(--text);background:radial-gradient(circle at 70% 20%,var(--bg2),var(--bg) 75%);transition:background .5s}
 button,input,textarea{font-family:var(--font);font-size:14px}
@@ -26,8 +26,11 @@ button,input,textarea{font-family:var(--font);font-size:14px}
 .st-filled p,.st-grad p{color:inherit;opacity:.85}
 .tools{position:absolute;top:-16px;left:10px;display:flex;gap:4px}
 .tools button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
-#site-footer{position:fixed;bottom:max(10px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:20;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 16px;font-size:13px;color:var(--muted);box-shadow:0 4px 20px var(--glow);white-space:nowrap;pointer-events:none}
-#site-footer b{color:var(--accent)}
+#intro{position:fixed;top:0;left:0;right:0;height:34vh;z-index:30;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;background:linear-gradient(135deg,var(--bg2),var(--bg));border-bottom:1px solid var(--accent);box-shadow:0 10px 60px var(--glow);overflow:hidden;transition:height 1s cubic-bezier(.7,0,.2,1),opacity .8s}
+#intro.off{height:0;opacity:0;border:0;pointer-events:none}
+#intro h1{margin:0;font-size:clamp(28px,6vw,54px);font-weight:800;color:var(--accent);text-shadow:0 0 30px var(--glow)}
+#intro p{margin:8px 0;color:var(--muted)}#intro small{color:var(--muted);opacity:.7}
+#intro .by{display:inline-block;margin:6px 0 10px;padding:4px 16px;border-radius:99px;font-size:14px;color:var(--text);border:1px solid var(--accent);box-shadow:0 0 16px var(--glow)}#intro .by b{color:var(--accent)}
 #logo{position:fixed;top:max(10px,env(safe-area-inset-top));right:12px;z-index:40;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);opacity:.55;transition:.4s}
 #logo.glow{opacity:1;border-color:var(--accent);box-shadow:0 0 14px 4px var(--accent),0 0 40px 10px var(--glow)}
 #hud{position:fixed;left:12px;bottom:max(14px,env(safe-area-inset-bottom));z-index:20;display:flex;flex-direction:column;gap:6px}
@@ -64,37 +67,36 @@ button{border:1px solid var(--line);background:var(--card);color:var(--text);bor
 <body>
 <div id="vp"><div id="world"><svg id="edges" width="1" height="1"></svg><div id="nodes"></div></div></div>
 <div id="empty" class="hidden"></div>
-<footer id="site-footer">
-  <div><span id="fTitle"></span> | <span id="fSub"></span> - ملخصات خاصة بـ <b>راما خبيب عبد الله</b></div>
-</footer>
+<header id="intro" onclick="collapseIntro()"><div><h1 id="iTitle"></h1><p id="iSub"></p>
+  <p class="by">ملخصات خاصة بـ <b>راما خبيب عبد الله</b></div></header>
 <button id="logo" aria-label="logo">🧬</button>
 <div id="hud"><button id="zin">＋</button><button id="zout">－</button><button id="zfit">⤢</button></div>
 <div id="bar" class="hidden">
-  <button id="bRoot">＋ فرع رئيسي</button><button id="bLay">ترتيب تلقائي</button>
-  <label class="chk"><input type="checkbox" id="bAuto"> تلقائي دائماً</label>
-  <button id="bTheme">🎨 الثيمات</button><button id="bTitle">✎ العنوان</button><button id="bIO">⇅ تصدير/استيراد</button>
-  <span id="cs"></span><button id="bOut">خروج</button>
+  <button id="bRoot">＋ فرع رئيسي</button><button id="bLay">ترتيب تلقائي</button>
+  <label class="chk"><input type="checkbox" id="bAuto"> تلقائي دائماً</label>
+  <button id="bTheme">🎨 الثيمات</button><button id="bTitle">✎ العنوان</button><button id="bIO">⇅ تصدير/استيراد</button>
+  <span id="cs"></span><button id="bOut">خروج</button>
 </div>
 <div id="askModal" class="modal hidden"><div class="box" style="text-align:center">
-  <h2 id="aName" style="font-size:30px;user-select:none">راما؟</h2>
-  <div class="row" style="justify-content:center"><button id="aY">نعم</button><button id="aN">لا</button></div></div></div>
+  <h2 id="aName" style="font-size:30px;user-select:none">راما؟</h2>
+  <div class="row" style="justify-content:center"><button id="aY">نعم</button><button id="aN">لا</button></div></div></div>
 <div id="pinModal" class="modal hidden"><div class="box"><h2>رمز المرور</h2>
-  <input id="pinIn" type="password" autocomplete="off" placeholder="PIN"><p id="pinErr" class="err"></p>
-  <div class="row"><button id="pinOk" class="pri">دخول</button><button id="pinNo">إلغاء</button></div></div></div>
+  <input id="pinIn" type="password" autocomplete="off" placeholder="PIN"><p id="pinErr" class="err"></p>
+  <div class="row"><button id="pinOk" class="pri">دخول</button><button id="pinNo">إلغاء</button></div></div></div>
 <div id="editModal" class="modal hidden"><div class="box"></div></div>
 <div id="pickModal" class="modal hidden" style="z-index:80"><div class="box"></div></div>
 <div id="themeModal" class="modal hidden" style="z-index:70"><div class="box"></div></div>
 <div id="ioModal" class="modal hidden"><div class="box"><h2>تصدير / استيراد</h2><small>اختاري ملف خريطة (JSON) أو الصقي كوده، ثم «إضافة للخريطة» (يضيف ويحدّث البطاقات بنفس المعرّف) أو «استبدال الكل».</small>
-  <input type="file" id="ioF" accept=".json,application/json"><textarea id="ioT"></textarea><div class="row"><button id="ioCopy">نسخ</button><button id="ioAdd" class="pri">إضافة للخريطة</button><button id="ioIn">استبدال الكل</button><button id="ioX">إغلاق</button></div></div></div>
+  <input type="file" id="ioF" accept=".json,application/json"><textarea id="ioT"></textarea><div class="row"><button id="ioCopy">نسخ</button><button id="ioAdd" class="pri">إضافة للخريطة</button><button id="ioIn">استبدال الكل</button><button id="ioX">إغلاق</button></div></div></div>
 <div id="dlg" class="modal hidden" style="z-index:95"><div class="box"><h3 id="dMsg"></h3><input id="dIn" class="hidden">
-  <div class="row"><button id="dOk" class="pri"></button><button id="dNo"></button></div></div></div>
+  <div class="row"><button id="dOk" class="pri"></button><button id="dNo"></button></div></div></div>
 <div id="lightbox" class="modal hidden"><img alt=""></div>
 <div id="toast"></div>
 <script>
 window.CFG={
-  SUPABASE_URL:"https://etazekagcydahdnmnauh.supabase.co",  // ضعي رابط مشروع Supabase هنا
-  SUPABASE_KEY:"sb_publishable_i1ImXxVNuzFquaimb-FToQ_1EwCS6Io",  // ومفتاح anon public هنا
-  PIN_HASH:"62c3848db317b7abb96e901cfa0bfaa750d75f35e0366407b9ad997ecf384d83" // للوضع المحلي فقط
+  SUPABASE_URL:"https://etazekagcydahdnmnauh.supabase.co",  // ضعي رابط مشروع Supabase هنا
+  SUPABASE_KEY:"sb_publishable_i1ImXxVNuzFquaimb-FToQ_1EwCS6Io",  // ومفتاح anon public هنا
+  PIN_HASH:"62c3848db317b7abb96e901cfa0bfaa750d75f35e0366407b9ad997ecf384d83" // للوضع المحلي فقط
 };
 </script>
 <script>
@@ -123,15 +125,15 @@ peach:mk('خوخي فاتح','#fff3ee','#ffdccf','#ffffff','#42241a','#f26a4b'),
 sky:mk('سماوي فاتح','#eef7fd','#d2e8f7','#ffffff','#12303f','#2b8fd1'),
 sunset:mk('تدرج الغروب','#fff1e6','#f6cfe8','#ffffff','#3a2140','#e0568f')};
 /* ===== الحالة ===== */
-let S={title:'ملخصات الأحياء',sub:'مرجع مرئي تفاعلي',theme:'sand',auto:true,nodes:[],my:[],fav:[],tc:null};
+let S={title:'ملخصات الأحياء',sub:'مرجع مرئي تفاعلي',theme:'emerald',auto:true,nodes:[],my:[],fav:[],tc:null};
 let admin=false,pin='',view={x:0,y:0,k:1},st;
 const uid=()=>Math.random().toString(36).slice(2,9);
 const esc=s=>(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2200)};
 const show=(id,v=true)=>$(id).classList.toggle('hidden',!v);
 function ask(msg,o={}){return new Promise(res=>{$('#dMsg').textContent=msg;const i=$('#dIn');i.classList.toggle('hidden',!o.input);i.value=o.val||'';show('#dlg');if(o.input)i.focus();
-  $('#dOk').textContent=o.ok||'موافق';$('#dNo').textContent='إلغاء';const d=v=>{show('#dlg',false);res(v)};
-  $('#dOk').onclick=()=>d(o.input?i.value:true);$('#dNo').onclick=()=>d(o.input?null:false)})}
+  $('#dOk').textContent=o.ok||'موافق';$('#dNo').textContent='إلغاء';const d=v=>{show('#dlg',false);res(v)};
+  $('#dOk').onclick=()=>d(o.input?i.value:true);$('#dNo').onclick=()=>d(o.input?null:false)})}
 /* ===== السحابة ===== */
 const H=()=>({apikey:C.SUPABASE_KEY,Authorization:'Bearer '+C.SUPABASE_KEY,'Content-Type':'application/json'});
 const rpc=(f,b)=>fetch(`${C.SUPABASE_URL}/rest/v1/rpc/${f}`,{method:'POST',headers:H(),body:JSON.stringify(b)});
@@ -139,108 +141,108 @@ async function fetchData(){if(cloud){const r=await fetch(`${C.SUPABASE_URL}/rest
 async function load(){try{const d=await fetchData();if(d&&d.nodes)S={...S,...d}}catch(e){toast('تعذر تحميل البيانات')}}
 function queueSave(){clearTimeout(st);st=setTimeout(async()=>{try{if(cloud){const r=await rpc('save_map',{p_pin:pin,p_data:S});toast(r.ok?'تم الحفظ ☁':'فشل الحفظ')}else{localStorage.setItem('bio_map',JSON.stringify(S));toast('حُفظ على هذا الجهاز فقط')}}catch(e){toast('فشل الحفظ')}},600)}
 async function checkPin(p){if(cloud){const r=await rpc('check_pin',{p_pin:p});return(await r.json())===true}
-  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')===C.PIN_HASH}
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')===C.PIN_HASH}
 /* ===== الثيم ===== */
-const themeObj=()=>S.theme==='custom'&&S.tc?S.tc:TH[S.theme]||S.my.find(t=>t.id===S.theme)||TH.sand;
+const themeObj=()=>S.theme==='custom'&&S.tc?S.tc:TH[S.theme]||S.my.find(t=>t.id===S.theme)||TH.emerald;
 function applyTheme(){const t=themeObj(),r=document.documentElement.style;
-  Object.entries({bg:t.bg,bg2:t.bg2,card:t.card,text:t.text,accent:t.acc,muted:mix(t.text,t.card,.42),line:mix(t.text,t.card,.86),glow:`rgba(${h2r(t.acc)},.28)`}).forEach(([k,v])=>r.setProperty('--'+k,v));
-  $('#fTitle').textContent=S.title;$('#fSub').textContent=S.sub;document.title=S.title}
+  Object.entries({bg:t.bg,bg2:t.bg2,card:t.card,text:t.text,accent:t.acc,muted:mix(t.text,t.card,.42),line:mix(t.text,t.card,.86),glow:`rgba(${h2r(t.acc)},.28)`}).forEach(([k,v])=>r.setProperty('--'+k,v));
+  $('#iTitle').textContent=S.title;$('#iSub').textContent=S.sub;document.title=S.title}
 /* ===== الرسم ===== */
 const nodesEl=$('#nodes'),world=$('#world'),vp=$('#vp'),elOf=n=>nodesEl.querySelector(`[data-id="${n.id}"]`);
 function render(){applyTheme();nodesEl.innerHTML='';const acc=themeObj().acc;
-  S.nodes.forEach(n=>{const d=document.createElement('div'),c=n.color||acc;d.className='node st-'+(n.style||'bar');d.dataset.id=n.id;d.style.setProperty('--nc',c);d.style.width=(n.w||280)+'px';
-    if(n.style==='filled'||n.style==='grad')d.style.setProperty('--nt',lum(c)>.58?'#1b1b1b':'#fff');
-    d.innerHTML=(n.img?`<img src="${n.img}" alt="">`:'')+`<h3>${esc(n.title)}</h3>`+(n.text?`<p>${esc(n.text)}</p>`:'')+(admin?`<div class="tools"><button data-a="edit">✎</button><button data-a="add">＋</button><button data-a="del">✕</button></div>`:'');
-    nodesEl.appendChild(d)});
-  if(S.auto)layout();place();edges();
-  show('#empty',!S.nodes.length);$('#empty').textContent=admin?'ابدأ بإضافة فرع رئيسي من الشريط السفلي':'لا توجد ملخصات بعد'}
+  S.nodes.forEach(n=>{const d=document.createElement('div'),c=n.color||acc;d.className='node st-'+(n.style||'bar');d.dataset.id=n.id;d.style.setProperty('--nc',c);d.style.width=(n.w||280)+'px';
+    if(n.style==='filled'||n.style==='grad')d.style.setProperty('--nt',lum(c)>.58?'#1b1b1b':'#fff');
+    d.innerHTML=(n.img?`<img src="${n.img}" alt="">`:'')+`<h3>${esc(n.title)}</h3>`+(n.text?`<p>${esc(n.text)}</p>`:'')+(admin?`<div class="tools"><button data-a="edit">✎</button><button data-a="add">＋</button><button data-a="del">✕</button></div>`:'');
+    nodesEl.appendChild(d)});
+  if(S.auto)layout();place();edges();
+  show('#empty',!S.nodes.length);$('#empty').textContent=admin?'ابدأ بإضافة فرع رئيسي من الشريط السفلي':'لا توجد ملخصات بعد'}
 const place=()=>S.nodes.forEach(n=>{const d=elOf(n);d.style.left=n.x+'px';d.style.top=n.y+'px'});
 function layout(){const ids=new Set(S.nodes.map(n=>n.id)),kids=id=>S.nodes.filter(n=>n.parent===id),par=n=>S.nodes.find(x=>x.id===n.parent);
-  const eff=n=>(n.dir&&n.dir!=='I')?n.dir:(par(n)?eff(par(n)):'L'),G=26,CG=90,sum=a=>a.reduce((x,y)=>x+y,0);
-  const box=n=>{const d=elOf(n),nw=d.offsetWidth,nh=d.offsetHeight,ks=kids(n.id).map(box),dir=eff(n),k=ks.length;
-    if(!k)return{w:nw,h:nh,p:(x,y)=>{n.x=x;n.y=y}};
-    if(dir=='L'||dir=='R'){const sh=sum(ks.map(q=>q.h))+G*(k-1),sw=Math.max(...ks.map(q=>q.w)),W=nw+CG+sw,Hh=Math.max(nh,sh);
-      return{w:W,h:Hh,p:(x,y)=>{n.y=y+(Hh-nh)/2;n.x=dir=='R'?x:x+sw+CG;const cx=dir=='R'?x+nw+CG:x;let t=y+(Hh-sh)/2;ks.forEach(q=>{q.p(dir=='R'?cx:cx+sw-q.w,t);t+=q.h+G})}}}
-    const rw=sum(ks.map(q=>q.w))+G*(k-1),mh=Math.max(...ks.map(q=>q.h)),W=Math.max(nw,rw),V=CG*.6;
-    return{w:W,h:nh+V+mh,p:(x,y)=>{n.x=x+(W-nw)/2;let cx=x+(W-rw)/2;const dn=dir=='D';n.y=dn?y:y+mh+V;const cy=dn?y+nh+V:y;ks.forEach(q=>{q.p(cx,dn?cy:cy+mh-q.h);cx+=q.w+G})}}};
-  let y=0;S.nodes.filter(n=>!n.parent||!ids.has(n.parent)).forEach(r=>{const b=box(r);b.p(0,y);y+=b.h+G*2})}
+  const eff=n=>(n.dir&&n.dir!=='I')?n.dir:(par(n)?eff(par(n)):'L'),G=26,CG=90,sum=a=>a.reduce((x,y)=>x+y,0);
+  const box=n=>{const d=elOf(n),nw=d.offsetWidth,nh=d.offsetHeight,ks=kids(n.id).map(box),dir=eff(n),k=ks.length;
+    if(!k)return{w:nw,h:nh,p:(x,y)=>{n.x=x;n.y=y}};
+    if(dir=='L'||dir=='R'){const sh=sum(ks.map(q=>q.h))+G*(k-1),sw=Math.max(...ks.map(q=>q.w)),W=nw+CG+sw,Hh=Math.max(nh,sh);
+      return{w:W,h:Hh,p:(x,y)=>{n.y=y+(Hh-nh)/2;n.x=dir=='R'?x:x+sw+CG;const cx=dir=='R'?x+nw+CG:x;let t=y+(Hh-sh)/2;ks.forEach(q=>{q.p(dir=='R'?cx:cx+sw-q.w,t);t+=q.h+G})}}}
+    const rw=sum(ks.map(q=>q.w))+G*(k-1),mh=Math.max(...ks.map(q=>q.h)),W=Math.max(nw,rw),V=CG*.6;
+    return{w:W,h:nh+V+mh,p:(x,y)=>{n.x=x+(W-nw)/2;let cx=x+(W-rw)/2;const dn=dir=='D';n.y=dn?y:y+mh+V;const cy=dn?y+nh+V:y;ks.forEach(q=>{q.p(cx,dn?cy:cy+mh-q.h);cx+=q.w+G})}}};
+  let y=0;S.nodes.filter(n=>!n.parent||!ids.has(n.parent)).forEach(r=>{const b=box(r);b.p(0,y);y+=b.h+G*2})}
 function edges(){const m={};S.nodes.forEach(n=>m[n.id]=n);let p='',defs='';const seen=new Set(),acc=themeObj().acc;
-  S.nodes.forEach(n=>{const P=m[n.parent];if(!P)return;const c=n.edge||acc,id='m'+c.replace('#','');
-    if(!seen.has(id)){seen.add(id);defs+=`<marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`}
-    const pe=elOf(P),ce=elOf(n),pw=pe.offsetWidth,ph=pe.offsetHeight,cw=ce.offsetWidth,ch=ce.offsetHeight,dx=n.x+cw/2-P.x-pw/2,dy=n.y+ch/2-P.y-ph/2;let a,b,hz;
-    if(Math.abs(dx)/(pw/2+cw/2)>=Math.abs(dy)/(ph/2+ch/2)){hz=1;if(dx<0){a=[P.x,P.y+ph/2];b=[n.x+cw,n.y+ch/2]}else{a=[P.x+pw,P.y+ph/2];b=[n.x,n.y+ch/2]}}
-    else if(dy>0){a=[P.x+pw/2,P.y+ph];b=[n.x+cw/2,n.y]}else{a=[P.x+pw/2,P.y];b=[n.x+cw/2,n.y+ch]}
-    const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
-    p+=`<path d="M${a[0]} ${a[1]}C${hz?mx+' '+a[1]+','+mx+' '+b[1]:a[0]+' '+my+','+b[0]+' '+my} ${b[0]} ${b[1]}" stroke="${c}" marker-end="url(#${id})"/>`});
-  $('#edges').innerHTML=`<defs>${defs}</defs>${p}`}
+  S.nodes.forEach(n=>{const P=m[n.parent];if(!P)return;const c=n.edge||acc,id='m'+c.replace('#','');
+    if(!seen.has(id)){seen.add(id);defs+=`<marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="${c}"/></marker>`}
+    const pe=elOf(P),ce=elOf(n),pw=pe.offsetWidth,ph=pe.offsetHeight,cw=ce.offsetWidth,ch=ce.offsetHeight,dx=n.x+cw/2-P.x-pw/2,dy=n.y+ch/2-P.y-ph/2;let a,b,hz;
+    if(Math.abs(dx)/(pw/2+cw/2)>=Math.abs(dy)/(ph/2+ch/2)){hz=1;if(dx<0){a=[P.x,P.y+ph/2];b=[n.x+cw,n.y+ch/2]}else{a=[P.x+pw,P.y+ph/2];b=[n.x,n.y+ch/2]}}
+    else if(dy>0){a=[P.x+pw/2,P.y+ph];b=[n.x+cw/2,n.y]}else{a=[P.x+pw/2,P.y];b=[n.x+cw/2,n.y+ch]}
+    const mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;
+    p+=`<path d="M${a[0]} ${a[1]}C${hz?mx+' '+a[1]+','+mx+' '+b[1]:a[0]+' '+my+','+b[0]+' '+my} ${b[0]} ${b[1]}" stroke="${c}" marker-end="url(#${id})"/>`});
+  $('#edges').innerHTML=`<defs>${defs}</defs>${p}`}
 /* ===== تحريك وتكبير ===== */
 const apply=()=>world.style.transform=`translate(${view.x}px,${view.y}px) scale(${view.k})`;
 function zoomAt(pt,f){const k=Math.min(3,Math.max(.12,view.k*f)),r=k/view.k;view.x=pt.x-(pt.x-view.x)*r;view.y=pt.y-(pt.y-view.y)*r;view.k=k;apply()}
 function fit(){if(!S.nodes.length){view={x:innerWidth/2,y:innerHeight/2,k:1};return apply()}
-  const E=S.nodes.map(n=>({x:n.x,y:n.y,w:elOf(n)?elOf(n).offsetWidth:280,h:elOf(n)?elOf(n).offsetHeight:150})),x1=Math.min(...E.map(e=>e.x)),x2=Math.max(...E.map(e=>e.x+e.w)),y1=Math.min(...E.map(e=>e.y)),y2=Math.max(...E.map(e=>e.y+e.h));
-  const k=Math.min(1,(innerWidth-60)/(x2-x1),(innerHeight-140)/(y2-y1));view.k=k;view.x=(innerWidth-(x2-x1)*k)/2-x1*k;view.y=(innerHeight-(y2-y1)*k)/2-y1*k;apply()}
+  const E=S.nodes.map(n=>({x:n.x,y:n.y,w:elOf(n)?elOf(n).offsetWidth:280,h:elOf(n)?elOf(n).offsetHeight:150})),x1=Math.min(...E.map(e=>e.x)),x2=Math.max(...E.map(e=>e.x+e.w)),y1=Math.min(...E.map(e=>e.y)),y2=Math.max(...E.map(e=>e.y+e.h));
+  const k=Math.min(1,(innerWidth-60)/(x2-x1),(innerHeight-140)/(y2-y1));view.k=k;view.x=(innerWidth-(x2-x1)*k)/2-x1*k;view.y=(innerHeight-(y2-y1)*k)/2-y1*k;apply()}
 const ptrs=new Map();let drag=null,pinch=0;
 const dist=()=>{const[a,b]=[...ptrs.values()];return Math.hypot(a.x-b.x,a.y-b.y)||1},mid=()=>{const[a,b]=[...ptrs.values()];return{x:(a.x+b.x)/2,y:(a.y+b.y)/2}};
 vp.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;vp.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
-  const nd=e.target.closest('.node');drag=ptrs.size===1?(admin&&nd&&!e.target.matches('img')?{t:'n',n:S.nodes.find(n=>n.id===nd.dataset.id),el:nd}:{t:'p'}):null;pinch=ptrs.size===2?dist():0});
+  const nd=e.target.closest('.node');drag=ptrs.size===1?(admin&&nd&&!e.target.matches('img')?{t:'n',n:S.nodes.find(n=>n.id===nd.dataset.id),el:nd}:{t:'p'}):null;pinch=ptrs.size===2?dist():0});
 vp.addEventListener('pointermove',e=>{const p=ptrs.get(e.pointerId);if(!p)return;const dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;
-  if(ptrs.size===2){const d=dist();zoomAt(mid(),d/pinch);pinch=d;return}
-  if(!drag)return;if(drag.t==='p'){view.x+=dx;view.y+=dy;apply()}else{drag.n.x+=dx/view.k;drag.n.y+=dy/view.k;drag.el.style.left=drag.n.x+'px';drag.el.style.top=drag.n.y+'px';drag.moved=1;edges()}});
+  if(ptrs.size===2){const d=dist();zoomAt(mid(),d/pinch);pinch=d;return}
+  if(!drag)return;if(drag.t==='p'){view.x+=dx;view.y+=dy;apply()}else{drag.n.x+=dx/view.k;drag.n.y+=dy/view.k;drag.el.style.left=drag.n.x+'px';drag.el.style.top=drag.n.y+'px';drag.moved=1;edges()}});
 const up=e=>{ptrs.delete(e.pointerId);if(drag&&drag.moved)queueSave();drag=null;pinch=0};
 vp.addEventListener('pointerup',up);vp.addEventListener('pointercancel',up);
 vp.addEventListener('wheel',e=>{e.preventDefault();zoomAt({x:e.clientX,y:e.clientY},e.deltaY<0?1.1:.9)},{passive:false});
 $('#zin').onclick=()=>zoomAt({x:innerWidth/2,y:innerHeight/2},1.25);$('#zout').onclick=()=>zoomAt({x:innerWidth/2,y:innerHeight/2},.8);$('#zfit').onclick=fit;
 nodesEl.addEventListener('click',async e=>{
-  if(e.target.matches('img')){$('#lightbox img').src=e.target.src;show('#lightbox');return}
-  const b=e.target.closest('[data-a]');if(!b)return;const n=S.nodes.find(x=>x.id===b.closest('.node').dataset.id);
-  if(b.dataset.a==='edit')openEdit(n);
-  if(b.dataset.a==='add'){const c={id:uid(),parent:n.id,title:'عنوان جديد',text:'',color:n.color,edge:n.edge,style:n.style,x:n.x-320,y:n.y};S.nodes.push(c);render();openEdit(c)}
-  if(b.dataset.a==='del'&&await ask('حذف هذه البطاقة وكل فروعها؟',{ok:'حذف'})){const rm=new Set([n.id]);let ch=1;while(ch){ch=0;S.nodes.forEach(x=>{if(!rm.has(x.id)&&rm.has(x.parent)){rm.add(x.id);ch=1}})}S.nodes=S.nodes.filter(x=>!rm.has(x.id));render();queueSave()}});
+  if(e.target.matches('img')){$('#lightbox img').src=e.target.src;show('#lightbox');return}
+  const b=e.target.closest('[data-a]');if(!b)return;const n=S.nodes.find(x=>x.id===b.closest('.node').dataset.id);
+  if(b.dataset.a==='edit')openEdit(n);
+  if(b.dataset.a==='add'){const c={id:uid(),parent:n.id,title:'عنوان جديد',text:'',color:n.color,edge:n.edge,style:n.style,x:n.x-320,y:n.y};S.nodes.push(c);render();openEdit(c)}
+  if(b.dataset.a==='del'&&await ask('حذف هذه البطاقة وكل فروعها؟',{ok:'حذف'})){const rm=new Set([n.id]);let ch=1;while(ch){ch=0;S.nodes.forEach(x=>{if(!rm.has(x.id)&&rm.has(x.parent)){rm.add(x.id);ch=1}})}S.nodes=S.nodes.filter(x=>!rm.has(x.id));render();queueSave()}});
 $('#lightbox').onclick=()=>show('#lightbox',false);
 /* ===== منتقي الألوان المخصص ===== */
 function pickColor(init,cb){let[h,s,v]=rgb2hsv(h2r(init||'#34d399'));const b=$('#pickModal .box'),cur=()=>r2h(hsv2rgb(h,s,v));
-  b.innerHTML=`<h2>اختيار اللون</h2><div class="cols" id="pcols"></div><div class="sw" id="psw"></div><canvas id="pc" width="320" height="230"></canvas><input type="range" id="pv" min="0" max="100"><div class="row"><span class="prev" id="pp"></span><input id="phex" size="8" dir="ltr"><button id="pfav">♥ حفظ درجتي</button></div><small>درجاتي المحفوظة</small><div class="sw" id="pfs"></div><div class="row"><button id="pok" class="pri">تم</button><button id="pno">إلغاء</button></div>`;
-  const c=$('#pc'),x=c.getContext('2d'),cx=160,cy=100,R=140,K=.6,r0=16,N=36,M=6;
-  const sw=(el,list)=>{el.innerHTML='';list.forEach(col=>{const q=document.createElement('button');q.style.background=col;q.onclick=()=>{[h,s,v]=rgb2hsv(h2r(col));draw()};el.appendChild(q)})};
-  const draw=()=>{const col=cur();x.clearRect(0,0,320,230);const cells=[];for(let i=0;i<N;i++)for(let j=0;j<M;j++)cells.push({i,j,y:Math.sin((i+.5)/N*6.283)*(r0+(j+.5)*(R-r0)/M)});cells.sort((p,q)=>p.y-q.y);
-    cells.forEach(({i,j})=>{const a0=i/N*6.283+.012,a1=(i+1)/N*6.283-.012,ra=r0+j*(R-r0)/M,rb=ra+(R-r0)/M-1.5,cc=r2h(hsv2rgb(i/N*360,(j+1)/M,v));
-      x.save();x.translate(cx,cy);x.scale(1,K);const P=()=>{x.beginPath();x.arc(0,0,rb,a0,a1);x.arc(0,0,ra,a1,a0,true);x.closePath()};
-      x.translate(0,9/K);P();x.fillStyle=mix(cc,'#000000',.45);x.fill();x.translate(0,-9/K);P();x.fillStyle=cc;x.fill();x.restore()});
-    x.save();x.translate(cx,cy);x.scale(1,K);x.beginPath();x.arc(0,0,r0-2,0,6.283);x.fillStyle=r2h(hsv2rgb(0,0,v));x.fill();x.restore();
-    const a=h/360*6.283,rr=r0+s*(R-r0);x.beginPath();x.arc(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr*K,9,0,6.283);x.fillStyle=col;x.fill();x.lineWidth=3;x.strokeStyle='#fff';x.stroke();x.lineWidth=1;x.strokeStyle='#000';x.stroke();
-    $('#pp').style.background=col;$('#phex').value=col;$('#pv').value=v*100;$('#pv').style.background=`linear-gradient(90deg,#000,${r2h(hsv2rgb(h,s,1))})`};
-  const pickAt=e=>{const r=c.getBoundingClientRect(),px=(e.clientX-r.left)*320/r.width,py=(e.clientY-r.top)*230/r.height,dx=px-cx,dy=(py-cy)/K;h=(Math.atan2(dy,dx)*180/Math.PI+360)%360;s=Math.max(0,Math.min(1,(Math.hypot(dx,dy)-r0)/(R-r0)));draw()};
-  let dn=0;c.onpointerdown=e=>{dn=1;c.setPointerCapture(e.pointerId);pickAt(e)};c.onpointermove=e=>dn&&pickAt(e);c.onpointerup=()=>dn=0;
-  $('#pv').oninput=e=>{v=e.target.value/100;draw()};
-  $('#phex').onchange=e=>{if(/^#?[0-9a-f]{6}$/i.test(e.target.value.trim())){[h,s,v]=rgb2hsv(h2r(e.target.value.trim().replace(/^#?/,'#')));draw()}};
-  const cols=$('#pcols');cols.innerHTML=Object.keys(COLS).map((k,i)=>`<button data-k="${k}" class="${i?'':'on'}">${k}</button>`).join('');sw($('#psw'),COLS['ريترو ١']);
-  cols.onclick=e=>{const k=e.target.dataset.k;if(!k)return;cols.querySelectorAll('button').forEach(q=>q.classList.toggle('on',q===e.target));sw($('#psw'),COLS[k])};
-  const fav=()=>sw($('#pfs'),S.fav);fav();$('#pfav').onclick=()=>{const col=cur();S.fav=[col,...S.fav.filter(z=>z!==col)].slice(0,24);fav();queueSave();toast('حُفظت الدرجة')};
-  $('#pok').onclick=()=>{show('#pickModal',false);cb(cur())};$('#pno').onclick=()=>show('#pickModal',false);show('#pickModal');draw()}
+  b.innerHTML=`<h2>اختيار اللون</h2><div class="cols" id="pcols"></div><div class="sw" id="psw"></div><canvas id="pc" width="320" height="230"></canvas><input type="range" id="pv" min="0" max="100"><div class="row"><span class="prev" id="pp"></span><input id="phex" size="8" dir="ltr"><button id="pfav">♥ حفظ درجتي</button></div><small>درجاتي المحفوظة</small><div class="sw" id="pfs"></div><div class="row"><button id="pok" class="pri">تم</button><button id="pno">إلغاء</button></div>`;
+  const c=$('#pc'),x=c.getContext('2d'),cx=160,cy=100,R=140,K=.6,r0=16,N=36,M=6;
+  const sw=(el,list)=>{el.innerHTML='';list.forEach(col=>{const q=document.createElement('button');q.style.background=col;q.onclick=()=>{[h,s,v]=rgb2hsv(h2r(col));draw()};el.appendChild(q)})};
+  const draw=()=>{const col=cur();x.clearRect(0,0,320,230);const cells=[];for(let i=0;i<N;i++)for(let j=0;j<M;j++)cells.push({i,j,y:Math.sin((i+.5)/N*6.283)*(r0+(j+.5)*(R-r0)/M)});cells.sort((p,q)=>p.y-q.y);
+    cells.forEach(({i,j})=>{const a0=i/N*6.283+.012,a1=(i+1)/N*6.283-.012,ra=r0+j*(R-r0)/M,rb=ra+(R-r0)/M-1.5,cc=r2h(hsv2rgb(i/N*360,(j+1)/M,v));
+      x.save();x.translate(cx,cy);x.scale(1,K);const P=()=>{x.beginPath();x.arc(0,0,rb,a0,a1);x.arc(0,0,ra,a1,a0,true);x.closePath()};
+      x.translate(0,9/K);P();x.fillStyle=mix(cc,'#000000',.45);x.fill();x.translate(0,-9/K);P();x.fillStyle=cc;x.fill();x.restore()});
+    x.save();x.translate(cx,cy);x.scale(1,K);x.beginPath();x.arc(0,0,r0-2,0,6.283);x.fillStyle=r2h(hsv2rgb(0,0,v));x.fill();x.restore();
+    const a=h/360*6.283,rr=r0+s*(R-r0);x.beginPath();x.arc(cx+Math.cos(a)*rr,cy+Math.sin(a)*rr*K,9,0,6.283);x.fillStyle=col;x.fill();x.lineWidth=3;x.strokeStyle='#fff';x.stroke();x.lineWidth=1;x.strokeStyle='#000';x.stroke();
+    $('#pp').style.background=col;$('#phex').value=col;$('#pv').value=v*100;$('#pv').style.background=`linear-gradient(90deg,#000,${r2h(hsv2rgb(h,s,1))})`};
+  const pickAt=e=>{const r=c.getBoundingClientRect(),px=(e.clientX-r.left)*320/r.width,py=(e.clientY-r.top)*230/r.height,dx=px-cx,dy=(py-cy)/K;h=(Math.atan2(dy,dx)*180/Math.PI+360)%360;s=Math.max(0,Math.min(1,(Math.hypot(dx,dy)-r0)/(R-r0)));draw()};
+  let dn=0;c.onpointerdown=e=>{dn=1;c.setPointerCapture(e.pointerId);pickAt(e)};c.onpointermove=e=>dn&&pickAt(e);c.onpointerup=()=>dn=0;
+  $('#pv').oninput=e=>{v=e.target.value/100;draw()};
+  $('#phex').onchange=e=>{if(/^#?[0-9a-f]{6}$/i.test(e.target.value.trim())){[h,s,v]=rgb2hsv(h2r(e.target.value.trim().replace(/^#?/,'#')));draw()}};
+  const cols=$('#pcols');cols.innerHTML=Object.keys(COLS).map((k,i)=>`<button data-k="${k}" class="${i?'':'on'}">${k}</button>`).join('');sw($('#psw'),COLS['ريترو ١']);
+  cols.onclick=e=>{const k=e.target.dataset.k;if(!k)return;cols.querySelectorAll('button').forEach(q=>q.classList.toggle('on',q===e.target));sw($('#psw'),COLS[k])};
+  const fav=()=>sw($('#pfs'),S.fav);fav();$('#pfav').onclick=()=>{const col=cur();S.fav=[col,...S.fav.filter(z=>z!==col)].slice(0,24);fav();queueSave();toast('حُفظت الدرجة')};
+  $('#pok').onclick=()=>{show('#pickModal',false);cb(cur())};$('#pno').onclick=()=>show('#pickModal',false);show('#pickModal');draw()}
 /* ===== نافذة تحرير البطاقة ===== */
 const chips=(el,opts,val,fn)=>{el.innerHTML=opts.map(([k,l])=>`<button type="button" data-k="${k}" class="${k==val?'on':''}">${l}</button>`).join('');el.onclick=e=>{const b=e.target.closest('button');if(!b)return;el.querySelectorAll('button').forEach(q=>q.classList.toggle('on',q===b));fn(b.dataset.k)}};
 const readImg=f=>new Promise(r=>{const i=new Image();i.onload=()=>{const s=Math.min(1,900/Math.max(i.width,i.height)),c=document.createElement('canvas');c.width=i.width*s;c.height=i.height*s;c.getContext('2d').drawImage(i,0,0,c.width,c.height);r(c.toDataURL('image/jpeg',.78))};i.src=URL.createObjectURL(f)});
 function openEdit(n){const t={...n},b=$('#editModal .box'),acc=themeObj().acc;
-  b.innerHTML=`<h2>تحرير البطاقة</h2><input id="eT" placeholder="العنوان"><textarea id="eX" rows="4" placeholder="النص"></textarea>
-  <div class="row"><span>لون البطاقة</span><button class="cb" id="cC"></button><span>لون السهم</span><button class="cb" id="cE"></button></div>
-  <small>شكل البطاقة</small><div class="chips" id="cS"></div><small>العرض</small><div class="chips" id="cW"></div><small>اتجاه فروع هذه البطاقة</small><div class="chips" id="cD"></div>
-  <div class="row"><input type="file" id="eF" accept="image/*"><button id="eR">حذف الصورة</button></div><div class="row"><button id="eOk" class="pri">حفظ</button><button id="eNo">إلغاء</button></div>`;
-  $('#eT').value=n.title;$('#eX').value=n.text||'';const paint=()=>{$('#cC').style.background=t.color||acc;$('#cE').style.background=t.edge||acc};paint();
-  $('#cC').onclick=()=>pickColor(t.color||acc,c=>{t.color=c;paint()});$('#cE').onclick=()=>pickColor(t.edge||acc,c=>{t.edge=c;paint()});
-  chips($('#cS'),[['bar','شريط'],['filled','ممتلئة'],['grad','متدرجة'],['glass','زجاجية'],['outline','إطار']],t.style||'bar',k=>t.style=k);
-  chips($('#cW'),[[220,'صغير'],[280,'متوسط'],[360,'كبير']],t.w||280,k=>t.w=+k);
-  chips($('#cD'),[['I','وراثة'],['L','◀ يسار'],['R','يمين ▶'],['D','▼ أسفل'],['U','▲ أعلى']],t.dir||'I',k=>t.dir=k);
-  $('#eF').onchange=async e=>{if(e.target.files[0]){t.img=await readImg(e.target.files[0]);toast('تمت إضافة الصورة')}};$('#eR').onclick=()=>{delete t.img;toast('حُذفت الصورة')};
-  $('#eNo').onclick=()=>show('#editModal',false);
-  $('#eOk').onclick=()=>{Object.assign(n,t,{title:$('#eT').value||'بدون عنوان',text:$('#eX').value});show('#editModal',false);render();queueSave()};show('#editModal')}
+  b.innerHTML=`<h2>تحرير البطاقة</h2><input id="eT" placeholder="العنوان"><textarea id="eX" rows="4" placeholder="النص"></textarea>
+  <div class="row"><span>لون البطاقة</span><button class="cb" id="cC"></button><span>لون السهم</span><button class="cb" id="cE"></button></div>
+  <small>شكل البطاقة</small><div class="chips" id="cS"></div><small>العرض</small><div class="chips" id="cW"></div><small>اتجاه فروع هذه البطاقة</small><div class="chips" id="cD"></div>
+  <div class="row"><input type="file" id="eF" accept="image/*"><button id="eR">حذف الصورة</button></div><div class="row"><button id="eOk" class="pri">حفظ</button><button id="eNo">إلغاء</button></div>`;
+  $('#eT').value=n.title;$('#eX').value=n.text||'';const paint=()=>{$('#cC').style.background=t.color||acc;$('#cE').style.background=t.edge||acc};paint();
+  $('#cC').onclick=()=>pickColor(t.color||acc,c=>{t.color=c;paint()});$('#cE').onclick=()=>pickColor(t.edge||acc,c=>{t.edge=c;paint()});
+  chips($('#cS'),[['bar','شريط'],['filled','ممتلئة'],['grad','متدرجة'],['glass','زجاجية'],['outline','إطار']],t.style||'bar',k=>t.style=k);
+  chips($('#cW'),[[220,'صغير'],[280,'متوسط'],[360,'كبير']],t.w||280,k=>t.w=+k);
+  chips($('#cD'),[['I','وراثة'],['L','◀ يسار'],['R','يمين ▶'],['D','▼ أسفل'],['U','▲ أعلى']],t.dir||'I',k=>t.dir=k);
+  $('#eF').onchange=async e=>{if(e.target.files[0]){t.img=await readImg(e.target.files[0]);toast('تمت إضافة الصورة')}};$('#eR').onclick=()=>{delete t.img;toast('حُذفت الصورة')};
+  $('#eNo').onclick=()=>show('#editModal',false);
+  $('#eOk').onclick=()=>{Object.assign(n,t,{title:$('#eT').value||'بدون عنوان',text:$('#eX').value});show('#editModal',false);render();queueSave()};show('#editModal')}
 /* ===== الثيمات ===== */
 function openThemes(){const b=$('#themeModal .box'),all=[...Object.entries(TH),...S.my.map(t=>[t.id,t])];
-  b.innerHTML=`<h2>الثيمات</h2><div class="tiles">${all.map(([k,t])=>`<div class="tile${S.theme===k?' on':''}" data-k="${k}" style="background:linear-gradient(135deg,${t.bg},${t.bg2})"><div><i style="background:${t.card}"></i><i style="background:${t.acc}"></i></div><span style="color:${t.text}">${t.n}</span>${k.startsWith('my_')?'<u data-del="1" style="color:'+t.text+'">✕</u>':''}</div>`).join('')}</div>
-  <h3>تخصيص الثيم الحالي</h3><div class="row" id="tcs"></div><div class="row"><input id="tN" placeholder="اسم ثيمي"><button id="tS">حفظ كثيمي</button></div><button id="tX" class="pri">إغلاق</button>`;
-  b.querySelector('.tiles').onclick=e=>{const t=e.target.closest('.tile');if(!t)return;if(e.target.dataset.del)S.my=S.my.filter(z=>z.id!==t.dataset.k);else S.theme=t.dataset.k;render();queueSave();openThemes()};
-  [['bg','خلفية'],['bg2','تدرّج'],['card','بطاقة'],['text','نص'],['acc','تمييز']].forEach(([k,l])=>{const w=document.createElement('div');w.innerHTML=`<small>${l}</small><br>`;const c=document.createElement('button');c.className='cb';c.style.background=themeObj()[k];c.onclick=()=>pickColor(themeObj()[k],v=>{S.tc={...themeObj(),n:'مخصص',[k]:v};S.theme='custom';render();queueSave();openThemes()});w.appendChild(c);$('#tcs').appendChild(w)});
-  $('#tS').onclick=()=>{const n=$('#tN').value.trim();if(!n)return toast('اكتبي اسماً للثيم');const id='my_'+uid();S.my.push({...themeObj(),id,n});S.theme=id;render();queueSave();openThemes()};
-  $('#tX').onclick=()=>show('#themeModal',false);show('#themeModal')}
+  b.innerHTML=`<h2>الثيمات</h2><div class="tiles">${all.map(([k,t])=>`<div class="tile${S.theme===k?' on':''}" data-k="${k}" style="background:linear-gradient(135deg,${t.bg},${t.bg2})"><div><i style="background:${t.card}"></i><i style="background:${t.acc}"></i></div><span style="color:${t.text}">${t.n}</span>${k.startsWith('my_')?'<u data-del="1" style="color:'+t.text+'">✕</u>':''}</div>`).join('')}</div>
+  <h3>تخصيص الثيم الحالي</h3><div class="row" id="tcs"></div><div class="row"><input id="tN" placeholder="اسم ثيمي"><button id="tS">حفظ كثيمي</button></div><button id="tX" class="pri">إغلاق</button>`;
+  b.querySelector('.tiles').onclick=e=>{const t=e.target.closest('.tile');if(!t)return;if(e.target.dataset.del)S.my=S.my.filter(z=>z.id!==t.dataset.k);else S.theme=t.dataset.k;render();queueSave();openThemes()};
+  [['bg','خلفية'],['bg2','تدرّج'],['card','بطاقة'],['text','نص'],['acc','تمييز']].forEach(([k,l])=>{const w=document.createElement('div');w.innerHTML=`<small>${l}</small><br>`;const c=document.createElement('button');c.className='cb';c.style.background=themeObj()[k];c.onclick=()=>pickColor(themeObj()[k],v=>{S.tc={...themeObj(),n:'مخصص',[k]:v};S.theme='custom';render();queueSave();openThemes()});w.appendChild(c);$('#tcs').appendChild(w)});
+  $('#tS').onclick=()=>{const n=$('#tN').value.trim();if(!n)return toast('اكتبي اسماً للثيم');const id='my_'+uid();S.my.push({...themeObj(),id,n});S.theme=id;render();queueSave();openThemes()};
+  $('#tX').onclick=()=>show('#themeModal',false);show('#themeModal')}
 /* ===== شريط المحرر ===== */
 $('#bRoot').onclick=()=>{const n={id:uid(),parent:null,title:'عنوان رئيسي',text:'',x:0,y:0};S.nodes.push(n);render();openEdit(n);setTimeout(fit,50)};
 $('#bLay').onclick=()=>{layout();place();edges();queueSave();fit()};
@@ -257,19 +259,20 @@ $('#bOut').onclick=()=>{admin=false;pin='';show('#bar',false);render()};
 let tp=[],gl=0,glT;const logo=$('#logo');
 const setGlow=v=>{gl=v;logo.classList.toggle('glow',!!v);clearTimeout(glT);if(v)glT=setTimeout(()=>{setGlow(0);tp=[]},6000)};
 logo.onclick=()=>{const t=Date.now();
-  if(!gl){tp=tp.filter(x=>t-x<1000);tp.push(t);if(tp.length>=3){tp=[];setGlow(1)}}
-  else{tp=tp.filter(x=>t-x<2000);tp.push(t);if(tp.length>=4){tp=[];setGlow(0);show('#askModal')}}};
+  if(!gl){tp=tp.filter(x=>t-x<1000);tp.push(t);if(tp.length>=3){tp=[];setGlow(1)}}
+  else{tp=tp.filter(x=>t-x<2000);tp.push(t);if(tp.length>=4){tp=[];setGlow(0);show('#askModal')}}};
 $('#aY').onclick=$('#aN').onclick=()=>show('#askModal',false);
 $('#aName').onclick=()=>{show('#askModal',false);$('#pinIn').value='';$('#pinErr').textContent='';show('#pinModal');$('#pinIn').focus()};
 $('#pinNo').onclick=()=>show('#pinModal',false);
-async function tryPin(){const p=$('#pinIn'].value.trim();if(!p)return;let ok=false;try{ok=await checkPin(p)}catch(e){}
-  if(!ok){$('#pinErr').textContent='رمز غير صحيح';return}
-  pin=p;admin=true;show('#pinModal',false);show('#bar');$('#bAuto').checked=S.auto;$('#cs').textContent=cloud?'☁ سحابي':'💾 محلي فقط';render();toast('وضع التحرير مفعّل');
-  if(cloud&&!S.nodes.length){try{const l=JSON.parse(localStorage.getItem('bio_map')||'null');if(l&&l.nodes&&l.nodes.length&&await ask('وجدت نسخة محفوظة على هذا الجهاز. ترفعينها للسحابة؟',{ok:'رفع'})){S={...S,...l};render();fit();queueSave()}}catch(e){}}}
+async function tryPin(){const p=$('#pinIn').value.trim();if(!p)return;let ok=false;try{ok=await checkPin(p)}catch(e){}
+  if(!ok){$('#pinErr').textContent='رمز غير صحيح';return}
+  pin=p;admin=true;show('#pinModal',false);show('#bar');$('#bAuto').checked=S.auto;$('#cs').textContent=cloud?'☁ سحابي':'💾 محلي فقط';render();toast('وضع التحرير مفعّل');
+  if(cloud&&!S.nodes.length){try{const l=JSON.parse(localStorage.getItem('bio_map')||'null');if(l&&l.nodes&&l.nodes.length&&await ask('وجدت نسخة محفوظة على هذا الجهاز. ترفعينها للسحابة؟',{ok:'رفع'})){S={...S,...l};render();fit();queueSave()}}catch(e){}}}
 $('#pinOk').onclick=tryPin;$('#pinIn').onkeydown=e=>{if(e.key==='Enter')tryPin()};
 /* ===== البداية ===== */
-(async()=>{await load();render();fit();
-  if(cloud)setInterval(async()=>{if(admin||drag)return;try{const d=await fetchData();if(d&&JSON.stringify(d)!==JSON.stringify(S)){S={...S,...d};render()}}catch(e){}},20000)})();
+function collapseIntro(){$('#intro').classList.add('off')}window.collapseIntro=collapseIntro;
+(async()=>{await load();render();fit();setTimeout(collapseIntro,3800);
+  if(cloud)setInterval(async()=>{if(admin||drag)return;try{const d=await fetchData();if(d&&JSON.stringify(d)!==JSON.stringify(S)){S={...S,...d};render()}}catch(e){}},20000)})();
 </script>
 </body>
 </html>
