@@ -26,11 +26,8 @@ button,input,textarea{font-family:var(--font);font-size:14px}
 .st-filled p,.st-grad p{color:inherit;opacity:.85}
 .tools{position:absolute;top:-16px;left:10px;display:flex;gap:4px}
 .tools button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--text);cursor:pointer}
-#intro{position:fixed;top:0;left:0;right:0;height:34vh;z-index:30;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;background:linear-gradient(135deg,var(--bg2),var(--bg));border-bottom:1px solid var(--accent);box-shadow:0 10px 60px var(--glow);overflow:hidden;transition:height 1s cubic-bezier(.7,0,.2,1),opacity .8s}
-#intro.off{height:0;opacity:0;border:0;pointer-events:none}
-#intro h1{margin:0;font-size:clamp(28px,6vw,54px);font-weight:800;color:var(--accent);text-shadow:0 0 30px var(--glow)}
-#intro p{margin:8px 0;color:var(--muted)}#intro small{color:var(--muted);opacity:.7}
-#intro .by{display:inline-block;margin:6px 0 10px;padding:4px 16px;border-radius:99px;font-size:14px;color:var(--text);border:1px solid var(--accent);box-shadow:0 0 16px var(--glow)}#intro .by b{color:var(--accent)}
+#site-footer{position:fixed;bottom:max(10px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:20;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:6px 16px;font-size:13px;color:var(--muted);box-shadow:0 4px 20px var(--glow);white-space:nowrap;pointer-events:none}
+#site-footer b{color:var(--accent)}
 #logo{position:fixed;top:max(10px,env(safe-area-inset-top));right:12px;z-index:40;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);opacity:.55;transition:.4s}
 #logo.glow{opacity:1;border-color:var(--accent);box-shadow:0 0 14px 4px var(--accent),0 0 40px 10px var(--glow)}
 #hud{position:fixed;left:12px;bottom:max(14px,env(safe-area-inset-bottom));z-index:20;display:flex;flex-direction:column;gap:6px}
@@ -67,6 +64,9 @@ button{border:1px solid var(--line);background:var(--card);color:var(--text);bor
 <body>
 <div id="vp"><div id="world"><svg id="edges" width="1" height="1"></svg><div id="nodes"></div></div></div>
 <div id="empty" class="hidden"></div>
+<footer id="site-footer">
+  <div><span id="fTitle"></span> | <span id="fSub"></span> - ملخصات خاصة بـ <b>راما خبيب عبد الله</b></div>
+</footer>
 <button id="logo" aria-label="logo">🧬</button>
 <div id="hud"><button id="zin">＋</button><button id="zout">－</button><button id="zfit">⤢</button></div>
 <div id="bar" class="hidden">
@@ -141,10 +141,10 @@ function queueSave(){clearTimeout(st);st=setTimeout(async()=>{try{if(cloud){cons
 async function checkPin(p){if(cloud){const r=await rpc('check_pin',{p_pin:p});return(await r.json())===true}
   const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')===C.PIN_HASH}
 /* ===== الثيم ===== */
-const themeObj=()=>S.theme==='custom'&&S.tc?S.tc:TH[S.theme]||S.my.find(t=>t.id===S.theme)||TH.emerald;
+const themeObj=()=>S.theme==='custom'&&S.tc?S.tc:TH[S.theme]||S.my.find(t=>t.id===S.theme)||TH.sand;
 function applyTheme(){const t=themeObj(),r=document.documentElement.style;
   Object.entries({bg:t.bg,bg2:t.bg2,card:t.card,text:t.text,accent:t.acc,muted:mix(t.text,t.card,.42),line:mix(t.text,t.card,.86),glow:`rgba(${h2r(t.acc)},.28)`}).forEach(([k,v])=>r.setProperty('--'+k,v));
-  $('#iTitle').textContent=S.title;$('#iSub').textContent=S.sub;document.title=S.title}
+  $('#fTitle').textContent=S.title;$('#fSub').textContent=S.sub;document.title=S.title}
 /* ===== الرسم ===== */
 const nodesEl=$('#nodes'),world=$('#world'),vp=$('#vp'),elOf=n=>nodesEl.querySelector(`[data-id="${n.id}"]`);
 function render(){applyTheme();nodesEl.innerHTML='';const acc=themeObj().acc;
@@ -262,7 +262,7 @@ logo.onclick=()=>{const t=Date.now();
 $('#aY').onclick=$('#aN').onclick=()=>show('#askModal',false);
 $('#aName').onclick=()=>{show('#askModal',false);$('#pinIn').value='';$('#pinErr').textContent='';show('#pinModal');$('#pinIn').focus()};
 $('#pinNo').onclick=()=>show('#pinModal',false);
-async function tryPin(){const p=$('#pinIn').value.trim();if(!p)return;let ok=false;try{ok=await checkPin(p)}catch(e){}
+async function tryPin(){const p=$('#pinIn'].value.trim();if(!p)return;let ok=false;try{ok=await checkPin(p)}catch(e){}
   if(!ok){$('#pinErr').textContent='رمز غير صحيح';return}
   pin=p;admin=true;show('#pinModal',false);show('#bar');$('#bAuto').checked=S.auto;$('#cs').textContent=cloud?'☁ سحابي':'💾 محلي فقط';render();toast('وضع التحرير مفعّل');
   if(cloud&&!S.nodes.length){try{const l=JSON.parse(localStorage.getItem('bio_map')||'null');if(l&&l.nodes&&l.nodes.length&&await ask('وجدت نسخة محفوظة على هذا الجهاز. ترفعينها للسحابة؟',{ok:'رفع'})){S={...S,...l};render();fit();queueSave()}}catch(e){}}}
