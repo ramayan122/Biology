@@ -67,8 +67,6 @@ button{border:1px solid var(--line);background:var(--card);color:var(--text);bor
 <body>
 <div id="vp"><div id="world"><svg id="edges" width="1" height="1"></svg><div id="nodes"></div></div></div>
 <div id="empty" class="hidden"></div>
-<header id="intro" onclick="collapseIntro()"><div><h1 id="iTitle"></h1><p id="iSub"></p>
-  <p class="by">ملخصات خاصة بـ <b>راما خبيب عبد الله</b></div></header>
 <button id="logo" aria-label="logo">🧬</button>
 <div id="hud"><button id="zin">＋</button><button id="zout">－</button><button id="zfit">⤢</button></div>
 <div id="bar" class="hidden">
@@ -270,8 +268,7 @@ async function tryPin(){const p=$('#pinIn').value.trim();if(!p)return;let ok=fal
   if(cloud&&!S.nodes.length){try{const l=JSON.parse(localStorage.getItem('bio_map')||'null');if(l&&l.nodes&&l.nodes.length&&await ask('وجدت نسخة محفوظة على هذا الجهاز. ترفعينها للسحابة؟',{ok:'رفع'})){S={...S,...l};render();fit();queueSave()}}catch(e){}}}
 $('#pinOk').onclick=tryPin;$('#pinIn').onkeydown=e=>{if(e.key==='Enter')tryPin()};
 /* ===== البداية ===== */
-function collapseIntro(){$('#intro').classList.add('off')}window.collapseIntro=collapseIntro;
-(async()=>{await load();render();fit();setTimeout(collapseIntro,3800);
+(async()=>{await load();render();fit();
   if(cloud)setInterval(async()=>{if(admin||drag)return;try{const d=await fetchData();if(d&&JSON.stringify(d)!==JSON.stringify(S)){S={...S,...d};render()}}catch(e){}},20000)})();
 </script>
 </body>
